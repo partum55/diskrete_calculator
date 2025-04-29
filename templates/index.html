@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boolean Expression Converter</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            margin-bottom: 30px;
+            border: none;
+            overflow: hidden;
+        }
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: bold;
+            padding: 15px 20px;
+            border-bottom: none;
+        }
+        .card-body {
+            padding: 25px;
+        }
+        .form-control {
+            border-radius: 10px;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 25px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn-outline-secondary {
+            border-radius: 10px;
+            padding: 8px 15px;
+            transition: all 0.3s;
+        }
+        .btn-outline-secondary:hover {
+            transform: translateY(-2px);
+        }
+        .result-section {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .result-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #764ba2;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            color: #764ba2;
+        }
+        .math-display {
+            overflow-x: auto;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+        }
+        .quick-insert {
+            margin-top: 15px;
+        }
+        .btn-symbol {
+            margin: 5px;
+            font-size: 16px;
+            padding: 5px 10px;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .help-section {
+            font-size: 14px;
+            color: #666;
+            margin-top: 15px;
+        }
+        .input-group-text {
+            border-radius: 10px 0 0 10px;
+            background-color: #f8f9fa;
+        }
+        .mode-toggle {
+            margin: 15px 0;
+        }
+        .toggle-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .manual-input-area {
+            display: none;
+            margin-top: 15px;
+        }
+        .quick-insert-area {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card mt-4">
+        <div class="card-header">
+            <h1 class="text-center mb-0">Boolean Expression Converter</h1>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="expression" class="form-label">Enter Boolean Expression (LaTeX format):</label>
+                        <input type="text" id="expression" class="form-control"
+                               placeholder="Example: x_1 \land x_2 \lor \overline{x_3}">
+                    </div>
+
+                    <div class="toggle-container">
+                        <div class="toggle-buttons btn-group" role="group">
+                            <input type="radio" class="btn-check" name="input-mode" id="quick-insert-mode" checked>
+                            <label class="btn btn-outline-secondary" for="quick-insert-mode">Quick Insert</label>
+
+                            <input type="radio" class="btn-check" name="input-mode" id="manual-mode">
+                            <label class="btn btn-outline-secondary" for="manual-mode">Manual Input</label>
+                        </div>
+                    </div>
+
+                    <div id="quick-insert-area" class="quick-insert-area">
+                        <div class="quick-insert">
+                            <label class="form-label">Quick Insert Symbols:</label>
+                            <div>
+                                <button class="btn-symbol" onclick="insertSymbol('\\land')">∧ (AND)</button>
+                                <button class="btn-symbol" onclick="insertSymbol('\\lor')">∨ (OR)</button>
+                                <button class="btn-symbol" onclick="insertSymbol('\\overline{x_i}')">¬ (NOT)</button>
+                                <button class="btn-symbol" onclick="insertSymbol('\\oplus')">⊕ (XOR)</button>
+                                <button class="btn-symbol" onclick="insertSymbol('\\Rightarrow')">→ (IMPLIES)</button>
+                                <button class="btn-symbol" onclick="insertSymbol('\\Leftrightarrow')">↔ (EQUIV)</button>
+                                <button class="btn-symbol" onclick="insertSymbol('x_1')">x₁</button>
+                                <button class="btn-symbol" onclick="insertSymbol('x_2')">x₂</button>
+                                <button class="btn-symbol" onclick="insertSymbol('x_3')">x₃</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="manual-input-area" class="manual-input-area">
+                        <div class="mb-3">
+                            <label for="manual-expression" class="form-label">Type Your LaTeX Expression:</label>
+                            <textarea id="manual-expression" class="form-control" rows="5"
+                                      placeholder="Enter your complete LaTeX expression here..."></textarea>
+                            <div class="d-grid mt-2">
+                                <button id="apply-manual" class="btn btn-secondary">Apply to Input</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="help-section">
+                        <p><strong>Supported operations:</strong></p>
+                        <ul>
+                            <li>AND: \land, \wedge, \cdot, *</li>
+                            <li>OR: \lor, \vee, +</li>
+                            <li>NOT: \overline{x}, \lnot x, \neg x, x'</li>
+                            <li>XOR: \oplus, \bigoplus</li>
+                            <li>IMPLIES: \Rightarrow, \rightarrow</li>
+                            <li>EQUIV: \Leftrightarrow, \leftrightarrow</li>
+                            <li>Variables format: x_1, x_2, x_3, etc.</li>
+                        </ul>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-3">
+                        <button id="processBtn" class="btn btn-primary btn-lg">Process Expression</button>
+                    </div>
+
+                    <div id="loading" class="loading">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p>Processing your expression...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="results" class="mt-4" style="display:none;">
+                <div class="result-section">
+                    <div class="result-title">Original Expression:</div>
+                    <div id="original" class="math-display"></div>
+
+                    <div class="result-title">Detected Variables:</div>
+                    <div id="variables" class="math-display"></div>
+
+                    <div class="result-title">Minimized Disjunctive Normal Form (MDNF):</div>
+                    <div id="mdnf" class="math-display"></div>
+
+                    <div class="result-title">Minimized Conjunctive Normal Form (MCNF):</div>
+                    <div id="mcnf" class="math-display"></div>
+
+                    <div class="result-title">Zhegalkin Polynomial (Reed-Muller):</div>
+                    <div id="zhegalkin" class="math-display"></div>
+
+                    <div class="result-title">Truth Table:</div>
+                    <div id="truthTable" class="math-display"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const processBtn = document.getElementById('processBtn');
+        const expressionInput = document.getElementById('expression');
+        const manualExpressionInput = document.getElementById('manual-expression');
+        const applyManualBtn = document.getElementById('apply-manual');
+        const resultsDiv = document.getElementById('results');
+        const loadingDiv = document.getElementById('loading');
+        const quickInsertMode = document.getElementById('quick-insert-mode');
+        const manualMode = document.getElementById('manual-mode');
+        const quickInsertArea = document.getElementById('quick-insert-area');
+        const manualInputArea = document.getElementById('manual-input-area');
+
+        // Toggle between Quick Insert and Manual Input modes
+        quickInsertMode.addEventListener('change', function() {
+            if (this.checked) {
+                quickInsertArea.style.display = 'block';
+                manualInputArea.style.display = 'none';
+            }
+        });
+
+        manualMode.addEventListener('change', function() {
+            if (this.checked) {
+                quickInsertArea.style.display = 'none';
+                manualInputArea.style.display = 'block';
+                manualExpressionInput.value = expressionInput.value;
+            }
+        });
+
+        // Apply manual expression to the main input
+        applyManualBtn.addEventListener('click', function() {
+            expressionInput.value = manualExpressionInput.value;
+        });
+
+        processBtn.addEventListener('click', processExpression);
+        expressionInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                processExpression();
+            }
+        });
+
+        function processExpression() {
+            const expression = expressionInput.value.trim();
+
+            if (!expression) {
+                alert('Please enter a Boolean expression');
+                return;
+            }
+
+            resultsDiv.style.display = 'none';
+            loadingDiv.style.display = 'block';
+
+            fetch('/process', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ expression: expression })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    loadingDiv.style.display = 'none';
+
+                    if (data.error) {
+                        alert('Error: ' + data.error);
+                        return;
+                    }
+
+                    displayResults(data);
+                    resultsDiv.style.display = 'block';
+                })
+                .catch(error => {
+                    loadingDiv.style.display = 'none';
+                    alert('Error: ' + error);
+                });
+        }
+
+        function displayResults(data) {
+            document.getElementById('original').textContent = '$$' + data.original + '$$';
+            document.getElementById('variables').textContent = data.variables.join(', ');
+            document.getElementById('mdnf').textContent = '$$' + data.mdnf + '$$';
+            document.getElementById('mcnf').textContent = '$$' + data.mcnf + '$$';
+            document.getElementById('zhegalkin').textContent = '$$' + data.zhegalkin + '$$';
+            document.getElementById('truthTable').textContent = '$$' + data.truth_table + '$$';
+
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true}
+                ]
+            });
+        }
+    });
+
+    function insertSymbol(symbol) {
+        const input = document.getElementById('expression');
+        const start = input.selectionStart;
+        const end = input.selectionEnd;
+        const current = input.value;
+
+        // If it's a template with 'x_i', replace 'i' with current position
+        let processedSymbol = symbol;
+        if (symbol.includes('x_i')) {
+            // If variables exist, get the next number
+            const vars = current.match(/x_(\d+)/g);
+            let nextNum = 1;
+            if (vars && vars.length > 0) {
+                const numbers = vars.map(v => parseInt(v.substring(2)));
+                nextNum = Math.max(...numbers) + 1;
+            }
+            processedSymbol = symbol.replace('i', nextNum);
+        }
+
+        input.value = current.substring(0, start) +
+            processedSymbol +
+            current.substring(end);
+
+        // Set cursor position after the inserted symbol
+        input.selectionStart = input.selectionEnd = start + processedSymbol.length;
+        input.focus();
+    }
+</script>
+</body>
+</html>
